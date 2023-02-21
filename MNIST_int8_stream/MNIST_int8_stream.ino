@@ -3,6 +3,7 @@
 #include "Model_evaluation.h"
 #include "Serial_read_python.h"
 
+String command;
 
 char buffer[50];
 float start_time;
@@ -17,8 +18,8 @@ String data_str;
 
 int num_iterations;
 
-int8_t* pred_time;
-int8_t* pred_eval;
+uint8_t* pred_time;
+uint8_t* pred_eval;
 float acc_sample;
 float acc_sum;
 float acc;
@@ -33,35 +34,50 @@ void setup() {
 
 void loop() {
 
-  while (!Serial.available());
-  Serial.print("MNIST_int8;");
+  while (!Serial.available());  // Wait for incoming data to be received
+  command = Serial.readStringUntil('\n');
   
-  // Measure execution time of the model
-  int8_t data[len_stream_data];
-  
-  label = read_data_from_python(data);
-  measure_execution_time(num_iterations, data);
+  if(command.equals("time")) {
+    // Measure execution time of the model
+    while (!Serial.available());  // Wait for incoming data to be received
 
+    Serial.print("MNIST_int8;");
 
-  // Evaluate the accuracy of the model
-  while (!Serial.available());
-  sprintf(buffer, "Number of samples: %d;", num_stream_data);
-  Serial.print(buffer);
-  
-  acc_sum = 0;
-
-  for(int i=0; i<num_stream_data; i++){
-    while (!Serial.available());
-
-    int8_t data[len_stream_data];
+    uint8_t data[len_stream_data];
     label = read_data_from_python(data);
-
-    acc_sample = measure_accuracy(data, label);
     
-    acc_sum += acc_sample;
+    measure_execution_time(num_iterations, data);
   }
+  else if(command.equals("acc")) {
+    // Evaluate the accuracy of the model
+    while (!Serial.available());  // Wait for incoming data to be received
 
-  acc = acc_sum / num_stream_data;
-  sprintf(buffer, "Model accuracy: %f %\n", acc*100);
-  Serial.print(buffer);
+    // uint8_t data[len_stream_data];
+    // label = read_data_from_python(data);
+
+    // Serial.print("MNIST_int8;");
+    // // sprintf(buffer, "Number of test samples: %d;", num_stream_data);
+    // // Serial.print(buffer);
+    
+    // measure_execution_time(num_iterations, data);
+    
+    acc_sum = 0;
+
+    Serial.print("num_stream_data: ");
+    Serial.print(num_stream_data);
+
+    for(int i=0; i<num_stream_data; i++){
+      while (!Serial.available());
+
+      uint8_t data[len_stream_data];
+      label = read_data_from_python(data);
+
+      acc_sample = measure_accuracy(data, label);
+      
+      acc_sum += acc_sample;
+    }
+    acc = acc_sum / num_stream_data;
+    sprintf(buffer, "Model accuracy: %f %\n", acc*100);
+    Serial.print(buffer);
+  }        
 }

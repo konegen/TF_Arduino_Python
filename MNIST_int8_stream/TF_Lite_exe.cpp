@@ -3,7 +3,7 @@
 namespace {
 // Create an area of memory to use for input, output, and intermediate arrays.
 constexpr int kTensorArenaSize = 190 * 1024;
-uint8_t tensor_arena[kTensorArenaSize];
+uuint8_t tensor_arena[kTensorArenaSize];
 
 tflite::ErrorReporter* error_reporter = nullptr;
 const tflite::Model* model = nullptr;
@@ -11,7 +11,7 @@ tflite::MicroInterpreter* interpreter = nullptr;
 TfLiteTensor* input = nullptr;
 TfLiteTensor* output = nullptr;
 
-int8_t* prediction = new int8_t[10];
+uint8_t* prediction = new uint8_t[10];
 }
 
 void setup_model() {
@@ -49,7 +49,7 @@ void setup_model() {
 
 }
 
-int8_t* model_execute(int8_t *input_data) {
+uint8_t* model_execute(uint8_t *input_data) {
   for (int i = 0; i < 784; ++i) {
     input->data.int8[i] = *input_data;
     input_data++;

@@ -6,4 +6,4 @@
 #include "tensorflow/lite/version.h"
 
 void setup_model();
-int8_t* model_execute(int8_t *);
+uint8_t* model_execute(uint8_t *);

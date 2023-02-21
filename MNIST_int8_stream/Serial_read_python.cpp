@@ -7,7 +7,7 @@ extern String data_str;
 extern int num_stream_data;
 extern int num_iterations;
 
-int read_data_from_python(int8_t* temp_data) {
+int read_data_from_python(uint8_t* temp_data) {
   int temp_label;
   if (Serial.available() > 0) {
     data_str = Serial.readStringUntil('\n');
