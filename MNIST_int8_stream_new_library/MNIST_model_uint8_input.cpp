@@ -1,19 +1,8 @@
 #include "MNIST_model_uint8_input.h"
 
-// We need to keep the data array aligned onsome architectures.
-#ifdef __has_attribute
-#define HAVE_ATTRIBUTE(x) __has_attribute(x)
-#else
-#define HAVE_ATTRIBUTE(x) 0
-#endif
-#if HAVE_ATTRIBUTE(aligned) || (defined(__GNUC__) && !defined(__clang__))
-#define DATA_ALIGN_ATTRIBUTE __attribute__((aligned(4)))
-#define DATA_ALIGN_ATTRIBUTE __attribute__((aligned(4)))
-#else
-#define DATA_ALIGN_ATTRIBUTE
-#endif
 
-const unsigned char MNIST_model_uint8_input_tflite[] DATA_ALIGN_ATTRIBUTE = {
+// Keep aligned to 16 bytes for CMSIS
+alignas(16) const unsigned char MNIST_model_uint8_input_tflite[] = {
     0x20, 0x00, 0x00, 0x00, 0x54, 0x46, 0x4c, 0x33, 0x00, 0x00, 0x00, 0x00,
     0x14, 0x00, 0x20, 0x00, 0x1c, 0x00, 0x18, 0x00, 0x14, 0x00, 0x10, 0x00,
     0x0c, 0x00, 0x00, 0x00, 0x08, 0x00, 0x04, 0x00, 0x14, 0x00, 0x00, 0x00,
@@ -5011,4 +5000,4 @@ const unsigned char MNIST_model_uint8_input_tflite[] DATA_ALIGN_ATTRIBUTE = {
     0x0c, 0x00, 0x0c, 0x00, 0x0b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00,
     0x0c, 0x00, 0x00, 0x00, 0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x72,
     };
-const int MNIST_model_uint8_input_tflite_len = 59952;
+const int MNIST_model_uint8_input_tflite_len = sizeof(MNIST_model_uint8_input_tflite);

@@ -3,25 +3,24 @@
 namespace {
 // Create an area of memory to use for input, output, and intermediate arrays.
 constexpr int kTensorArenaSize = 190 * 1024;
-uint8_t tensor_arena[kTensorArenaSize];
+// Keep aligned to 16 bytes for CMSIS
+alignas(16) uint8_t tensor_arena[kTensorArenaSize];
 
-tflite::ErrorReporter* error_reporter = nullptr;
 const tflite::Model* model = nullptr;
 tflite::MicroInterpreter* interpreter = nullptr;
 TfLiteTensor* input = nullptr;
 TfLiteTensor* output = nullptr;
 
-int8_t* prediction = new int8_t[10];
+uint8_t* prediction = new uint8_t[10];
 }
 
 void setup_model() {
-  static tflite::MicroErrorReporter micro_error_reporter;
-  error_reporter = &micro_error_reporter;
+  tflite::InitializeTarget();
 
   // Load the tflite Model
-  model = tflite::GetModel(MNIST_model_int8_input_tflite);
+  model = tflite::GetModel(MNIST_model_uint8_input_tflite);
   if (model->version() != TFLITE_SCHEMA_VERSION) {
-    error_reporter->Report(
+    MicroPrintf(
         "Model provided is schema version %d not equal "
         "to supported version %d.",
         model->version(), TFLITE_SCHEMA_VERSION);
@@ -33,13 +32,13 @@ void setup_model() {
 
   // Build an interpreter to run the model with.
   static tflite::MicroInterpreter static_interpreter(
-      model, resolver, tensor_arena, kTensorArenaSize, error_reporter);
+      model, resolver, tensor_arena, kTensorArenaSize);
   interpreter = &static_interpreter;
 
   // Allocate memory from the tensor_arena for the model's tensors.
   TfLiteStatus allocate_status = interpreter->AllocateTensors();
   if (allocate_status != kTfLiteOk) {
-    error_reporter->Report("AllocateTensors() failed");
+    MicroPrintf("AllocateTensors() failed");
     return;
   }
 
@@ -49,7 +48,7 @@ void setup_model() {
 
 }
 
-int8_t* model_execute(int8_t *input_data) {
+uint8_t* model_execute(uint8_t *input_data) {
   for (int i = 0; i < 784; ++i) {
     input->data.int8[i] = *input_data;
     input_data++;
@@ -58,7 +57,7 @@ int8_t* model_execute(int8_t *input_data) {
   // Run inference, and report any error
   TfLiteStatus invoke_status = interpreter->Invoke();
   if (invoke_status != kTfLiteOk) {
-    error_reporter->Report("Error by invoking interpreter\n");
+    MicroPrintf("Error by invoking interpreter\n");
     return 0;
   }
 

@@ -43,12 +43,12 @@ if __name__ == "__main__":
             # still remain 32-bit float.
             converter.optimizations = [tf.lite.Optimize.DEFAULT]
             converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
-            converter.inference_input_type = tf.uint8
-            converter.inference_output_type = tf.uint8
+            converter.inference_input_type = tf.int8
+            converter.inference_output_type = tf.int8
 
         tflite_model = converter.convert()
 
         if input_data_int8:
-            open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "MNIST_model_uint8_input.tflite"), "wb").write(tflite_model)
+            open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "MNIST_model_int8_input.tflite"), "wb").write(tflite_model)
         else:
             open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "MNIST_model_float32_input.tflite"), "wb").write(tflite_model)

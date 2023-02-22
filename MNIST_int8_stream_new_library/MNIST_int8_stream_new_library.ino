@@ -18,15 +18,15 @@ String data_str;
 
 int num_iterations;
 
-int8_t* pred_time;
-int8_t* pred_eval;
+uint8_t* pred_time;
+uint8_t* pred_eval;
 float acc_sample;
 float acc_sum;
 float acc;
 
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   delay(2500);
   setup_model();
 }
@@ -39,11 +39,11 @@ void loop() {
   
   if(command.equals("time")) {
     // Measure execution time of the model
-    // while (!Serial.available());  // Wait for incoming data to be received
+    while (!Serial.available());  // Wait for incoming data to be received
 
-    Serial.print("MNIST_int8 time measurement;");
+    Serial.print("MNIST_int8;");
 
-    int8_t data[len_stream_data];
+    uint8_t data[len_stream_data];
     label = read_data_from_python(data);
     
     measure_execution_time(num_iterations, data);
@@ -52,22 +52,24 @@ void loop() {
     // Evaluate the accuracy of the model
     while (!Serial.available());  // Wait for incoming data to be received
 
-    Serial.print("MNIST_int8 accuracy measurement;");
+    // uint8_t data[len_stream_data];
+    // label = read_data_from_python(data);
+
+    // Serial.print("MNIST_int8;");
+    // // sprintf(buffer, "Number of test samples: %d;", num_stream_data);
+    // // Serial.print(buffer);
     
-    sprintf(buffer, "Number of test samples: %d;", num_stream_data);
-    Serial.print(buffer);
-
-    int8_t data[len_stream_data];
-    label = read_data_from_python(data);
-
+    // measure_execution_time(num_iterations, data);
+    
     acc_sum = 0;
-    acc_sample = measure_accuracy(data, label);
-    acc_sum += acc_sample;
 
-    for(int i=1; i<num_stream_data; i++){
+    Serial.print("num_stream_data: ");
+    Serial.print(num_stream_data);
+
+    for(int i=0; i<num_stream_data; i++){
       while (!Serial.available());
 
-      int8_t data[len_stream_data];
+      uint8_t data[len_stream_data];
       label = read_data_from_python(data);
 
       acc_sample = measure_accuracy(data, label);

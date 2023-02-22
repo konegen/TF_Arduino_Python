@@ -25,35 +25,15 @@ logging.basicConfig(
 # Load data to test model
 (_, _), (x_test, y_test) = mnist.load_data()
 x_test = x_test.astype(int)
-# x_test -= 128
+x_test -= 128
 x_test = x_test.reshape(x_test.shape[0], -1)
 
 
-arduino = serial.Serial(port='COM4', baudrate=115200, timeout=.1)
+arduino = serial.Serial(port='COM4', baudrate=9600, timeout=.1)
 
 
 def write_read_arduino(data, label, n_iterations, n_data):
     arduino.flushInput()
-
-    # data = data[:150]
-    # index = 0
-    # chunk_size = 100
-    # while index < len(data):
-    #     data_str = ""
-    #     if index+chunk_size < len(data):
-    #         data_str += ",".join([str(x) for x in data[index:index+chunk_size]])
-    #         data_str += ","
-    #     else:
-    #         data_str += ",".join([str(x) for x in data[index:index+chunk_size]])
-    #         data_str += f",{label}"
-    #         data_str += f",{n_iterations}"
-    #         data_str += f",{n_data}"
-    #         data_str += f",{signed_int8_conversion}"
-    #         data_str += ",\n"
-    #     index += chunk_size
-    #     arduino.write(data_str.encode())
-    #     arduino.flush()  # flush the serial buffer to ensure the data is sent
-
 
     data_str = ""
     data_str += ",".join([str(x) for x in data])
@@ -62,7 +42,6 @@ def write_read_arduino(data, label, n_iterations, n_data):
     data_str += f",{n_data}\n"
 
     arduino.write(data_str.encode())
-    # arduino.flush()  # flush the serial buffer to ensure the data is sent
 
     while(arduino.inWaiting() == 0):  # wait for the data to be available on the serial port before
         pass                          # proceeding to read the data. This ensures that the script
@@ -93,14 +72,16 @@ while True:
         print('Finished program')
         break
 
+    arduino_data = arduino.readline()
+
     if command == 'time':
-        arduino.write(bytes(command + '\n', 'utf-8'))
+        arduino.write(bytes(command, 'utf-8'))
         # Time measurement
         # num_iterations = int(input("Enter a number of iterations to measure time: ")) # Taking input from user
         write_read_arduino(x_test[0], y_test[0], num_iterations, num_data)
 
     if command == 'acc':
-        arduino.write(bytes(command + '\n', 'utf-8'))
+        arduino.write(bytes(command, 'utf-8'))
         # Accuracy measurement
         # num_data = int(input("Enter a number of data to use: ")) # Taking input from user
         for i in range(num_data):

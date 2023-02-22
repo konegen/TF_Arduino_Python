@@ -5,7 +5,7 @@ model_name = "MNIST_model"
 
 if __name__ == "__main__":
 
-    for input_data in ["float32_input", "uint8_input"]:
+    for input_data in ["float32_input", "int8_input"]:
 
         with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", f"{model_name}_{input_data}.tflite"), 'rb') as f:
             content = f.read().hex()

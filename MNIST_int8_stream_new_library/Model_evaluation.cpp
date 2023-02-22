@@ -9,14 +9,14 @@ extern float end_time;
 extern float total_time;
 extern float mean_time;
 
-extern int8_t* pred_time;
-extern int8_t* pred_eval;
+extern uint8_t* pred_time;
+extern uint8_t* pred_eval;
 extern float acc_sample;
 
 int num_of_pred_classes = 10;
 
 
-void measure_execution_time(int num_iterations, int8_t* data) {
+void measure_execution_time(int num_iterations, uint8_t* data) {
     // Measure time of x predictions and take the mean
     start_time = millis();
     for(int i=0; i<num_iterations; i++){
@@ -41,13 +41,13 @@ void measure_execution_time(int num_iterations, int8_t* data) {
 }
 
 
-int measure_accuracy(int8_t* data, int label) {
+int measure_accuracy(uint8_t* data, int label) {
   
     pred_eval = model_execute(data);
     // Possible post processing of prediction
     
     // Get predicted class
-    int8_t max_value = pred_eval[0];
+    uint8_t max_value = pred_eval[0];
     int max_index = 0;
 
     for (int i = 1; i < num_of_pred_classes; i++) {
