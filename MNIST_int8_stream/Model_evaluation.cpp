@@ -11,7 +11,6 @@ extern float mean_time;
 
 extern int8_t* pred_time;
 extern int8_t* pred_eval;
-extern float acc_sample;
 
 int num_of_pred_classes = 10;
 
@@ -26,17 +25,17 @@ void measure_execution_time(int num_iterations, int8_t* data) {
     total_time = end_time - start_time;
     mean_time = total_time / num_iterations;
 
-    sprintf(buffer, "Start time: %fms;", start_time);
+    sprintf(buffer, "Start time: %.2fms;", start_time);
     Serial.print(buffer);
-    sprintf(buffer, "End time: %fms;", end_time);
+    sprintf(buffer, "End time: %.2fms;", end_time);
     Serial.print(buffer);
-    sprintf(buffer, "Total time: %fms;", total_time);
+    sprintf(buffer, "Total time: %.2fms;", total_time);
     Serial.print(buffer);
     sprintf(buffer, "Number of measurements: %d;", num_iterations);
     Serial.print(buffer);
-    sprintf(buffer, "Mean inference time: %fs = %fms;", mean_time/1000, mean_time);
+    sprintf(buffer, "Mean inference time: %.5fs = %.2fms;", mean_time/1000, mean_time);
     Serial.print(buffer);
-    sprintf(buffer, "Mean FPS: %f\n;", 1.0/(mean_time/1000));
+    sprintf(buffer, "Mean FPS: %.2f\n;", 1.0/(mean_time/1000));
     Serial.print(buffer);
 }
 
@@ -55,7 +54,7 @@ int measure_accuracy(int8_t* data, int label) {
             max_value = pred_eval[i];
             max_index = i;
         }
-    }
+    // }
     
     sprintf(buffer, "Predicted: %d,  True: %d;", max_index, label);
     Serial.print(buffer);

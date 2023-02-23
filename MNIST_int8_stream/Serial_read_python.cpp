@@ -28,19 +28,6 @@ int read_data_from_python(int8_t* stream_data) {
     }
     num_stream_data = data_str.toInt();
   }
-
-  // Serial.print("data: ");
-  // for(int i=0; i<len_stream_data; i++){
-  //   sprintf(buffer, "%d,", stream_data[i]);
-  //   Serial.print(buffer);
-  // }
   
-  // sprintf(buffer, ";label: %d;", temp_label);
-  // Serial.print(buffer);
-  // sprintf(buffer, "num_iterations: %d;", num_iterations);
-  // Serial.print(buffer);
-  // sprintf(buffer, "num_stream_data: %d;", num_stream_data);
-  // Serial.print(buffer);
-
   return temp_label;
 }
