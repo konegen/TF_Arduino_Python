@@ -51,8 +51,6 @@ int measure_accuracy(int8_t* data, int label) {
     int max_index = 0;
 
     for (int i = 1; i < num_of_pred_classes; i++) {
-        // sprintf(buffer, "i: %d,  pred_eval[i]: %d,  max_value: %d;", i, pred_eval[i], max_value);
-        // Serial.print(buffer);
         if (pred_eval[i] > max_value) {
             max_value = pred_eval[i];
             max_index = i;

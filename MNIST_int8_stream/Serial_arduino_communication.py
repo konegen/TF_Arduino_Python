@@ -35,26 +35,6 @@ arduino = serial.Serial(port='COM4', baudrate=115200, timeout=.1)
 def write_read_arduino(data, label, n_iterations, n_data):
     arduino.flushInput()
 
-    # data = data[:150]
-    # index = 0
-    # chunk_size = 100
-    # while index < len(data):
-    #     data_str = ""
-    #     if index+chunk_size < len(data):
-    #         data_str += ",".join([str(x) for x in data[index:index+chunk_size]])
-    #         data_str += ","
-    #     else:
-    #         data_str += ",".join([str(x) for x in data[index:index+chunk_size]])
-    #         data_str += f",{label}"
-    #         data_str += f",{n_iterations}"
-    #         data_str += f",{n_data}"
-    #         data_str += f",{signed_int8_conversion}"
-    #         data_str += ",\n"
-    #     index += chunk_size
-    #     arduino.write(data_str.encode())
-    #     arduino.flush()  # flush the serial buffer to ensure the data is sent
-
-
     data_str = ""
     data_str += ",".join([str(x) for x in data])
     data_str += f",{label}"
@@ -62,20 +42,22 @@ def write_read_arduino(data, label, n_iterations, n_data):
     data_str += f",{n_data}\n"
 
     arduino.write(data_str.encode())
-    # arduino.flush()  # flush the serial buffer to ensure the data is sent
+    arduino.flush()  # flush the serial buffer to ensure the data is sent
 
     while(arduino.inWaiting() == 0):  # wait for the data to be available on the serial port before
         pass                          # proceeding to read the data. This ensures that the script
                                       # only reads complete data
 
-    arduino_data = arduino.readline()
+    time.sleep(0.5)
+
+    arduino_data = b''
     while arduino.inWaiting() > 0:
         # read the remaining data
         arduino_data += arduino.readline()
     arduino_data_split = arduino_data.split(b';')
     for i in range(len(arduino_data_split)):
         arduino_data_decode = arduino_data_split[i].decode("utf-8")
-        if "MNIST" in arduino_data_decode or "acc" in arduino_data_decode:
+        if "MNIST" in arduino_data_decode or "Model accuracy" in arduino_data_decode:
             logging.info(arduino_data_decode + "\n")
         elif arduino_data_decode:
             logging.info(arduino_data_decode)

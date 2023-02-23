@@ -39,9 +39,10 @@ void loop() {
   
   if(command.equals("time")) {
     // Measure execution time of the model
-    // while (!Serial.available());  // Wait for incoming data to be received
+    // Wait for incoming data to be received
+    while (!Serial.available());
 
-    Serial.print("MNIST_int8 time measurement;");
+    // Serial.print("MNIST_int8 time measurement;");
 
     int8_t data[len_stream_data];
     label = read_data_from_python(data);
@@ -50,9 +51,10 @@ void loop() {
   }
   else if(command.equals("acc")) {
     // Evaluate the accuracy of the model
-    while (!Serial.available());  // Wait for incoming data to be received
+    // Wait for incoming data to be received
+    while (!Serial.available());
 
-    Serial.print("MNIST_int8 accuracy measurement;");
+    // Serial.print("MNIST_int8 accuracy measurement;");
     
     sprintf(buffer, "Number of test samples: %d;", num_stream_data);
     Serial.print(buffer);
@@ -65,6 +67,7 @@ void loop() {
     acc_sum += acc_sample;
 
     for(int i=1; i<num_stream_data; i++){
+      // Wait for incoming data to be received
       while (!Serial.available());
 
       int8_t data[len_stream_data];
@@ -75,7 +78,7 @@ void loop() {
       acc_sum += acc_sample;
     }
     acc = acc_sum / num_stream_data;
-    sprintf(buffer, "Model accuracy: %f %\n", acc*100);
+    sprintf(buffer, "Model accuracy: %.2f%%\n", acc*100);
     Serial.print(buffer);
   }        
 }
