@@ -54,7 +54,7 @@ int measure_accuracy(int8_t* data, int label) {
             max_value = pred_eval[i];
             max_index = i;
         }
-    // }
+    }
     
     sprintf(buffer, "Predicted: %d,  True: %d;", max_index, label);
     Serial.print(buffer);

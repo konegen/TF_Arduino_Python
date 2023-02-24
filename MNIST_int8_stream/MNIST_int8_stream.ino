@@ -33,14 +33,23 @@ void setup() {
 
 void loop() {
 
-  while (!Serial.available());  // Wait for incoming data to be received
+  // Wait for incoming data to be received (command for time or accuracy measurement)
+  while (!Serial.available());
+  
   command = Serial.readStringUntil('\n');
   
   if(command.equals("time")) {
     // Measure execution time of the model
+
+    // Wait for incoming data to be received (Number of iterations for time measurement)
+    while (!Serial.available());
+
     Serial.print("MNIST_int8 time measurement;");
 
-    // Wait for incoming data to be received
+    // Receive information of number of iterations
+    num_iterations = Serial.readStringUntil('\n').toInt();
+
+    // Wait for incoming data to be received (Input image and label)
     while (!Serial.available());
 
     int8_t data[len_stream_data];
@@ -50,9 +59,16 @@ void loop() {
   }
   else if(command.equals("acc")) {
     // Evaluate the accuracy of the model
+
+    // Wait for incoming data to be received (Number of data for accuracy measurement)
+    while (!Serial.available());
+    
     Serial.print("MNIST_int8 accuracy measurement;");
 
-    // Wait for incoming data to be received
+    // Receive information of number of iterations
+    num_stream_data = Serial.readStringUntil('\n').toInt();
+
+    // Wait for incoming data to be received (Input image and label)
     while (!Serial.available());
 
     int8_t data[len_stream_data];
@@ -66,6 +82,8 @@ void loop() {
 
     for(int i=1; i<num_stream_data; i++){
       Serial.print("\n");
+    
+      // Wait for incoming data to be received (Input image and label)
       while (!Serial.available());
 
       int8_t data[len_stream_data];

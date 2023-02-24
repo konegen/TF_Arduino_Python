@@ -31,14 +31,12 @@ x_test = x_test.reshape(x_test.shape[0], -1)
 arduino = serial.Serial(port='COM4', baudrate=115200, timeout=.1)
 
 
-def write_read_arduino(data, label, n_iterations, n_data):
+def write_read_arduino(data, label):
     arduino.flushInput()
 
     data_str = ""
     data_str += ",".join([str(x) for x in data])
-    data_str += f",{label}"
-    data_str += f",{n_iterations}"
-    data_str += f",{n_data}\n"
+    data_str += f",{label}\n"
 
     arduino.write(data_str.encode())
     arduino.flush()  # flush the serial buffer to ensure the data is sent
@@ -68,8 +66,6 @@ def write_read_arduino(data, label, n_iterations, n_data):
 
 while True:
     command = input("Enter a command: ")  # Taking input from user
-    # num_iterations = 2
-    # num_data = 10
 
     x_test, y_test = shuffle(x_test, y_test)
 
@@ -78,14 +74,16 @@ while True:
         break
 
     if command == 'time':
-        arduino.write(bytes(command + '\n', 'utf-8'))
         # Time measurement
-        num_iterations = int(input("Enter a number of iterations to measure time: ")) # Taking input from user
-        write_read_arduino(x_test[0], y_test[0], n_iterations=num_iterations, n_data=1)
+        arduino.write(bytes(command + '\n', 'utf-8'))
+        num_iterations = input("Enter a number of iterations to measure time: ") # Taking input from user
+        arduino.write(bytes(num_iterations + '\n', 'utf-8'))
+        write_read_arduino(x_test[0], y_test[0])
 
     if command == 'acc':
-        arduino.write(bytes(command + '\n', 'utf-8'))
         # Accuracy measurement
-        num_data = int(input("Enter a number of data to use: ")) # Taking input from user
-        for i in range(num_data):
-            write_read_arduino(x_test[i], y_test[i], n_iterations=1, n_data=num_data)
+        arduino.write(bytes(command + '\n', 'utf-8'))
+        num_data = input("Enter a number of data to use: ") # Taking input from user
+        arduino.write(bytes(num_data + '\n', 'utf-8'))
+        for i in range(int(num_data)):
+            write_read_arduino(x_test[i], y_test[i])

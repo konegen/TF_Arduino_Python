@@ -7,7 +7,7 @@ extern int num_stream_data;
 extern int num_iterations;
 
 int read_data_from_python(float* stream_data) {
-  int temp_label;
+  int data_label;
   if (Serial.available() > 0) {
     data_str = Serial.readStringUntil('\n');
     int i = 0;
@@ -15,18 +15,14 @@ int read_data_from_python(float* stream_data) {
       if (j < (data_str.length()-1) && data_str[j] == ',') {
         if (i < len_stream_data) {
           stream_data[i] = data_str.substring(0, j).toInt() / 255.0; // characters until the next "," converted to float
-        } else if (i == len_stream_data) {
-          temp_label = data_str.substring(0, j).toInt();
-        } else {
-          num_iterations = data_str.substring(0, j).toInt();
         }
         data_str = data_str.substring(j+1);
         j = -1;
         i++;
       }
     }
-    num_stream_data = data_str.toInt();
+    data_label = data_str.toInt();
   }
 
-  return temp_label;
+  return data_label;
 }
